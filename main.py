@@ -8,19 +8,30 @@ import xml.dom.minidom
 
 def main():
     context = ssl._create_unverified_context()
-    # Словарь с xml файлами 'ID категории': ['ссылка', 'название']
-    xml_cat = {'1': ['https://all-cool.ru/bitrix/catalog_export/nal_desh_i_kabin.xml', 'Кабины в наличии'],
+    # Словарь с xml файлами 'ID категории': ['ссылка', 'название'] для загрузки по ссылке
+    xml_cat = {'1': ['http://all-cool.ru/bitrix/catalog_export/nal_desh_i_kabin.xml', 'Кабины в наличии'],
                '2': ['http://all-cool.ru/bitrix/catalog_export/NE_nal_desh_i_kabin.xml', 'Кабины не в наличии']
                }
+
+    # # Словарь для загрузки файлов из папки уровнем выше
+    # xml_cat = {'1': ['nal_desh_i_kabin.xml', 'Кабины в наличии'],
+    #            '2': ['NE_nal_desh_i_kabin.xml', 'Кабины не в наличии']
+    #            }
+
     results = []
     for i in xml_cat:
+        # Для загрузки по ссылке
         req = Request(
             url=xml_cat[i][0],
             headers={'User-Agent': 'Mozilla/5.0'}
         )
         webpage = urlopen(req, context=context).read().decode('UTF-8')
 
-        soup = bs(webpage, features='xml')
+        # # для загрузки файлов из папки уровнем выше
+        # with open('../' + xml_cat[i][0], 'r') as file:
+        #     webpage = file.read()
+
+        soup = bs(webpage, features="xml")
         start_date = soup.find('yml_catalog').attrs
         offers = soup.find_all('offer')
         if i == '1':
