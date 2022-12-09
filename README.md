@@ -1,3 +1,3 @@
-# Объединение нескольких XML в один с изменением id категории
+# Combining several XML into one with changing the category id
 
-Программа выполняет объединение двух XML файлов в один. Предложения из первого файла получают один id категории, и второго файла - другой
+The program merges two XML files into one. Offers from the first file get one category id, and the second file gets a different one
