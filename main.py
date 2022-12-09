@@ -8,26 +8,26 @@ import xml.dom.minidom
 
 def main():
     context = ssl._create_unverified_context()
-    # Словарь с xml файлами 'ID категории': ['ссылка', 'название'] для загрузки по ссылке
+    # Dict with xml 'category ID': ['link', 'name']
     xml_cat = {'1': ['http://all-cool.ru/bitrix/catalog_export/nal_desh_i_kabin.xml', 'Кабины в наличии'],
                '2': ['http://all-cool.ru/bitrix/catalog_export/NE_nal_desh_i_kabin.xml', 'Кабины не в наличии']
                }
 
-    # # Словарь для загрузки файлов из папки уровнем выше
+    # # Dict for load from directory
     # xml_cat = {'1': ['nal_desh_i_kabin.xml', 'Кабины в наличии'],
     #            '2': ['NE_nal_desh_i_kabin.xml', 'Кабины не в наличии']
     #            }
 
     results = []
     for i in xml_cat:
-        # Для загрузки по ссылке
+        # For load from website
         req = Request(
             url=xml_cat[i][0],
             headers={'User-Agent': 'Mozilla/5.0'}
         )
         webpage = urlopen(req, context=context).read().decode('UTF-8')
 
-        # # для загрузки файлов из папки уровнем выше
+        # # for load from directory
         # with open('../' + xml_cat[i][0], 'r') as file:
         #     webpage = file.read()
 
@@ -39,13 +39,13 @@ def main():
         if i == '2':
             results.append([re.sub('<categoryId>\d+</categoryId>', '<categoryId>2</categoryId>', i.__str__()) for i in offers])
 
-    # Начало итогового XML
+    # Begin XML
     start = f'<yml_catalog date="{start_date["date"]}"><shop><name>all-cool.ru</name><company>all-cool.ru</company><url>http://all-cool.ru</url><platform>BSM/Yandex/Market</platform><version>2.3.0</version><cpa>1</cpa><currencies><currency id="RUR" rate="1"/></currencies><categories><category id="1">В наличии</category><category id="2">Не в наличии</category></categories><enable_auto_discounts>true</enable_auto_discounts><offers>'
 
-    # Конец итогового XML
+    # End XML
     end = '</offers></shop></yml_catalog>'
 
-    # Offers итогового XML
+    # Offers XML
     data = start + ''.join(results[0]) + ''.join(results[1]) + end
 
     def beautify_xml(xml_str):
@@ -55,7 +55,7 @@ def main():
     with open('data2.xml', 'wt') as fout:
         fout.write(beautify_xml(data))
 
-    print(f'XML файл создан\n'
+    print(f'XML was created\n'
           f'В наличии - {len(results[0])}\n'
           f'Не в наличии - {len(results[1])}')
 
